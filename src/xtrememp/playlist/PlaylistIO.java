@@ -1,20 +1,20 @@
 /**
- * Xtreme Media Player a cross-platform media player.
- * Copyright (C) 2005-2011 Besmir Beqiri
- * 
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
+ * Xtreme Media Player a cross-platform media player. Copyright (C) 2005-2011
+ * Besmir Beqiri
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation; either version 2 of the License, or (at your option) any later
+ * version.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU General Public License along with
+ * this program; if not, write to the Free Software Foundation, Inc., 51
+ * Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 package xtrememp.playlist;
 
@@ -46,10 +46,9 @@ import xtrememp.tag.TagInfo;
 import xtrememp.util.Utilities;
 
 /**
- * Playlist input/output utility.
- * This class provides static utility methods for loading and saving playlist.
- * It support .m3u and .pls playlist format.
- * 
+ * Playlist input/output utility. This class provides static utility methods for
+ * loading and saving playlist. It support .m3u and .pls playlist format.
+ *
  * @author Besmir Beqiri
  */
 public final class PlaylistIO {
@@ -58,7 +57,7 @@ public final class PlaylistIO {
 
     /**
      * Loads playlist from the specified location.
-     * 
+     *
      * @param location
      * @return a list of playlist items
      */
@@ -303,10 +302,14 @@ public final class PlaylistIO {
                 if (Utilities.startWithProtocol(trackLocation)) {
                     // URL.
                     if (Utilities.startWithProtocol(trackLocation, "file:")) {
-                        File f = new File(new URI(trackLocation));
-                        if (f.exists()) {
-                            String baseName = FilenameUtils.getBaseName(f.getName());
-                            pli = new PlaylistItem(baseName, f.getAbsolutePath(), -1, true);
+                        try {
+                            File f = new File(new URI(trackLocation));
+                            if (f.exists()) {
+                                String baseName = FilenameUtils.getBaseName(f.getName());
+                                pli = new PlaylistItem(baseName, f.getAbsolutePath(), -1, true);
+                            }
+                        } catch (IllegalArgumentException ex) {
+                            logger.error(ex.getMessage());
                         }
                     } else {
                         String trackTitle = track.getTitle();
@@ -338,10 +341,12 @@ public final class PlaylistIO {
 
     /**
      * Saves playlist in M3U format.
-     * 
+     *
      * @param playlist
      * @param location
-     * @return <code>true</code> if playlist is successfully saved, else <code>false</code>.
+     * @return
+     * <code>true</code> if playlist is successfully saved, else
+     * <code>false</code>.
      */
     public static boolean saveM3U(Playlist playlist, String location) throws PlaylistException {
         if (playlist != null) {
@@ -370,10 +375,12 @@ public final class PlaylistIO {
 
     /**
      * Saves playlist in XSPF format.
-     * 
+     *
      * @param playlist
      * @param location
-     * @return <code>true</code> if playlist is successfully saved, else <code>false</code>.
+     * @return
+     * <code>true</code> if playlist is successfully saved, else
+     * <code>false</code>.
      */
     public static boolean saveXSPF(Playlist playlist, String location) throws PlaylistException {
         if (playlist != null) {

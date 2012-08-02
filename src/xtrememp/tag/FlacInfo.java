@@ -89,6 +89,7 @@ public class FlacInfo extends TagInfo {
                 genre = flacTag.getFirst(FieldKey.GENRE);
                 track = flacTag.getFirst(FieldKey.TRACK);
                 comment = flacTag.getFirst(FieldKey.COMMENT);
+                artwork = flacTag.getFirstArtwork();
             }
         } catch (CannotReadException ex) {
             throw new IOException(ex);

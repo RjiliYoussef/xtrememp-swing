@@ -1,6 +1,6 @@
 /**
  * Xtreme Media Player a cross-platform media player.
- * Copyright (C) 2005-2011 Besmir Beqiri
+ * Copyright (C) 2005-2012 Besmir Beqiri
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -23,9 +23,8 @@ import java.awt.Graphics2D;
 import java.awt.GraphicsConfiguration;
 import java.awt.image.BufferedImage;
 import java.nio.FloatBuffer;
-import xtrememp.player.dsp.DssContext;
-
 import javax.sound.sampled.SourceDataLine;
+import xtrememp.player.dsp.DssContext;
 
 /**
  * Visualization base class.
@@ -76,14 +75,14 @@ public abstract class Visualization implements Comparable<Visualization> {
     /**
      * @return the foregroundColor.
      */
-    public Color getForegroundColor() {
+    public synchronized Color getForegroundColor() {
         return foregroundColor;
     }
 
     /**
      * @param foregroundColor the foregroundColor to set.
      */
-    public void setForegroundColor(Color foregroundColor) {
+    public synchronized void setForegroundColor(Color foregroundColor) {
         this.foregroundColor = foregroundColor;
     }
 

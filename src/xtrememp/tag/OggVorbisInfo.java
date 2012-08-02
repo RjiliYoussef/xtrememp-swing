@@ -88,6 +88,7 @@ public class OggVorbisInfo extends TagInfo {
                 genre = vcTag.getFirst(FieldKey.GENRE);
                 track = vcTag.getFirst(FieldKey.TRACK);
                 comment = vcTag.getFirst(FieldKey.COMMENT);
+                artwork = vcTag.getFirstArtwork();
             }
         } catch (CannotReadException ex) {
             throw new IOException(ex);

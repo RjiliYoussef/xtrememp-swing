@@ -129,7 +129,7 @@ public class BusyLabel extends JLabel {
             }
             double a = 2 * Math.PI / points, x = Math.sin(i * a), y = Math.cos(i * a);
             g2d.drawLine(width / 2 + (int) (5 * x), height / 2 + (int) (5 * y),
-                    width / 2 + (int) (width / 2 * x), height / 2 + (int) (height / 2 * y));
+                    width / 2 + (int) (width / 2.0D * x), height / 2 + (int) (height / 2.0D * y));
         }
 
         g2d.dispose();

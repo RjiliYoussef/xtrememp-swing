@@ -1,7 +1,18 @@
 *.class
 
 # Package Files #
-*.jar
+#commenting this one against netbeans default settings allows versioning of
+#project's dependencies, … we know it's not the best way to do, but if you
+#wanna help us and deal with a mvn-like, you're welcome :)
+#*.jar
 *.war
 *.ear
-/.svn/
+/nbproject/private/
+/build/
+/dist/
+/xtrememp-audio-spi-flac/build/
+/xtrememp-audio-spi-flac/dist/
+/xtrememp-audio-spi-mpeg/build/
+/xtrememp-audio-spi-mpeg/dist/
+/xtrememp-audio-spi-vorbis/build/
+/xtrememp-audio-spi-vorbis/dist/

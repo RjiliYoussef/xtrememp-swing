@@ -1,20 +1,20 @@
 /**
- * Xtreme Media Player a cross-platform media player.
- * Copyright (C) 2005-2011 Besmir Beqiri
- * 
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
+ * Xtreme Media Player a cross-platform media player. Copyright (C) 2005-2011
+ * Besmir Beqiri
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation; either version 2 of the License, or (at your option) any later
+ * version.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU General Public License along with
+ * this program; if not, write to the Free Software Foundation, Inc., 51
+ * Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 package xtrememp;
 
@@ -28,26 +28,16 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
-import java.awt.dnd.DnDConstants;
-import java.awt.dnd.DropTarget;
-import java.awt.dnd.DropTargetContext;
-import java.awt.dnd.DropTargetDragEvent;
-import java.awt.dnd.DropTargetDropEvent;
-import java.awt.dnd.DropTargetEvent;
-import java.awt.dnd.DropTargetListener;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.datatransfer.UnsupportedFlavorException;
+import java.awt.dnd.*;
+import java.awt.event.*;
 import java.io.File;
-import java.io.FilenameFilter;
+import java.io.IOException;
 import java.net.URI;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.StringTokenizer;
+import java.net.URISyntaxException;
+import java.nio.file.*;
+import java.nio.file.attribute.BasicFileAttributes;
+import java.util.*;
 
 import javax.sound.sampled.AudioSystem;
 import javax.swing.BorderFactory;
@@ -97,8 +87,8 @@ import xtrememp.util.file.PlaylistFileFilter;
 import xtrememp.util.file.XspfPlaylistFileFilter;
 
 /**
- * Playlist manager class.
- * Special thanks to rom1dep for the changes applied to this class.
+ * Playlist manager class. Special thanks to rom1dep for the changes applied to
+ * this class.
  *
  * @author Besmir Beqiri
  */
@@ -315,8 +305,12 @@ public class PlaylistManager extends JPanel implements ActionListener,
         };
     }
 
-    protected void addFiles(List<File> newFiles, boolean playFirst) {
-        AddFilesWorker addFilesWorker = new AddFilesWorker(newFiles, playFirst);
+    protected void addFiles(List<File> files, boolean playFirst) {
+        List<Path> paths = new ArrayList<>(files.size());
+        for (File file : files) {
+            paths.add(file.toPath());
+        }
+        AddFilesWorker addFilesWorker = new AddFilesWorker(paths, playFirst);
         addFilesWorker.execute();
     }
 
@@ -594,7 +588,7 @@ public class PlaylistManager extends JPanel implements ActionListener,
                 addFiles(fileList, false);
                 targetContext.dropComplete(true);
             }
-        } catch (Exception ex) {
+        } catch (UnsupportedFlavorException | IOException | InvalidDnDOperationException | URISyntaxException ex) {
             logger.error(ex.getMessage(), ex);
         }
     }
@@ -741,31 +735,56 @@ public class PlaylistManager extends JPanel implements ActionListener,
 
     protected class AddFilesWorker extends AbstractSwingWorker<Void, PlaylistItem> {
 
-        private final List<File> fileList;
+        private final List<Path> pathList;
         private final boolean playFirst;
         private int firstIndex;
+        private DirectoryStream.Filter<Path> filter = new DirectoryStream.Filter<Path>() {
 
-        public AddFilesWorker(List<File> fileList, boolean playFirst) {
-            this.fileList = fileList;
+            @Override
+            public boolean accept(Path entry) throws IOException {
+                return acceptPath(entry, AudioFileFilter.AudioFileExt);
+            }
+        };
+
+        public AddFilesWorker(List<Path> pathList, boolean playFirst) {
+            this.pathList = pathList;
             this.playFirst = playFirst;
             this.firstIndex = playlist.size();
         }
 
-        @Override
-        protected Void doInBackground() {
-            List<File> tempFileList = new ArrayList<File>();
-            for (File file : fileList) {
-                if (file.isDirectory()) {
-                    scanDir(file, tempFileList);
-                } else if (audioFileFilter.accept(file)) {
-                    tempFileList.add(file);
+        protected boolean acceptPath(Path path, String... exts) {
+            Objects.requireNonNull(path);
+            Objects.requireNonNull(exts);
+            
+            if(Files.isDirectory(path)) {
+                return true;
+            }
+            
+            String s = path.toString().toLowerCase();
+            for (String ext : exts) {
+                if (s.endsWith(ext)) {
+                    return true;
                 }
             }
+            return false;
+        }
+
+        @Override
+        protected Void doInBackground() {
+            List<Path> tempFileList = new ArrayList<>();
+            for (Path path : pathList) {
+                if (Files.isDirectory(path)) {
+                    scanDir(path, tempFileList);
+                } else if (acceptPath(path, AudioFileFilter.AudioFileExt)) {
+                    tempFileList.add(path);
+                }
+            }
+
             int count = 0;
             int size = tempFileList.size();
-            for (File file : tempFileList) {
-                String baseName = FilenameUtils.getBaseName(file.getName());
-                PlaylistItem pli = new PlaylistItem(baseName, file.getAbsolutePath(), -1, true);
+            for (Path file : tempFileList) {
+                String baseName = FilenameUtils.getBaseName(file.toFile().getName());
+                PlaylistItem pli = new PlaylistItem(baseName, file.toFile().getAbsolutePath(), -1, true);
                 pli.getTagInfo();
                 publish(pli);
                 count++;
@@ -792,13 +811,17 @@ public class PlaylistManager extends JPanel implements ActionListener,
             }
         }
 
-        protected void scanDir(File dir, List<File> fileList) {
-            for (File file : dir.listFiles((FilenameFilter) audioFileFilter)) {
-                if (file.isFile()) {
-                    fileList.add(file);
-                } else {
-                    scanDir(file, fileList);
+        protected void scanDir(Path path, List<Path> pathList) {
+            try (DirectoryStream<Path> dirStream = Files.newDirectoryStream(path, filter)) {
+                for (Path p : dirStream) {
+                    if (Files.isDirectory(p)) {
+                        scanDir(p, pathList);
+                    } else {
+                        pathList.add(p);
+                    }
                 }
+            } catch (IOException ex) {
+                logger.error(ex.getMessage(), ex);
             }
         }
     }

@@ -70,7 +70,7 @@ public class EqualizerDialog extends JDialog implements ActionListener {
     private int[] eqgains = null;
     private int eqdist = OVERDIST;
     private JCheckBox activateCheckBox;
-    private JComboBox presetComboBox;
+    private JComboBox<String> presetComboBox;
     private JSlider panSlider;
     private JSlider[] sliders;
 
@@ -117,7 +117,7 @@ public class EqualizerDialog extends JDialog implements ActionListener {
         presetMap.put(presetsLabels[11], PRESET_REGGAE);
         presetMap.put(presetsLabels[12], PRESET_ROCK);
         presetMap.put(presetsLabels[13], PRESET_TECHNO);
-        presetComboBox = new JComboBox(presetsLabels);
+        presetComboBox = new JComboBox<String>(presetsLabels);
         presetComboBox.setSelectedIndex(Settings.getEqualizerPresetIndex());
         presetComboBox.addActionListener(this);
         toolBar.add(presetComboBox);
@@ -148,7 +148,7 @@ public class EqualizerDialog extends JDialog implements ActionListener {
      * @param bands
      */
     public void setBands(float[] bands) {
-        this.bands = bands;
+        System.arraycopy(this.bands, 0, bands, 0, bands.length);
     }
 
     /**

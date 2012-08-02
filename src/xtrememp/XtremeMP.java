@@ -1,6 +1,6 @@
 /**
  * Xtreme Media Player a cross-platform media player.
- * Copyright (C) 2005-2011 Besmir Beqiri
+ * Copyright (C) 2005-2012 Besmir Beqiri
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -18,48 +18,40 @@
  */
 package xtrememp;
 
-import java.awt.CardLayout;
-import java.awt.Desktop;
-import java.awt.Dimension;
-import java.awt.EventQueue;
-import java.awt.Font;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.InputEvent;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseWheelEvent;
-import java.awt.event.MouseWheelListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
+import com.melloware.jintellitype.IntellitypeListener;
+import com.melloware.jintellitype.JIntellitype;
+import java.awt.*;
+import java.awt.event.*;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.net.MalformedURLException;
+import java.net.URISyntaxException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
+import javax.sound.sampled.AudioSystem;
+import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import net.miginfocom.swing.MigLayout;
+import org.apache.commons.cli.*;
+import org.pushingpixels.lafwidget.animation.AnimationConfigurationManager;
+import org.pushingpixels.lafwidget.animation.AnimationFacet;
+import org.pushingpixels.substance.api.DecorationAreaType;
+import org.pushingpixels.substance.api.SubstanceConstants;
+import org.pushingpixels.substance.api.SubstanceLookAndFeel;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import xtrememp.player.audio.AudioPlayer;
 import xtrememp.player.audio.PlaybackEvent;
 import xtrememp.player.audio.PlaybackListener;
 import xtrememp.player.audio.PlayerException;
-import xtrememp.playlist.Playlist;
-import xtrememp.playlist.PlaylistEvent;
-import xtrememp.playlist.PlaylistException;
-import xtrememp.playlist.PlaylistIO;
-import xtrememp.playlist.PlaylistItem;
-import xtrememp.playlist.PlaylistListener;
+import xtrememp.playlist.*;
 import xtrememp.tag.TagInfo;
-import xtrememp.ui.button.NextButton;
-import xtrememp.ui.button.PlayPauseButton;
-import xtrememp.ui.button.PreviousButton;
-import xtrememp.ui.button.StopButton;
-import xtrememp.ui.button.VolumeButton;
+import xtrememp.ui.button.*;
 import xtrememp.ui.label.BusyLabel;
 import xtrememp.ui.skin.GFXUIListener;
 import xtrememp.ui.slider.SeekSlider;
@@ -72,51 +64,6 @@ import xtrememp.util.Utilities;
 import static xtrememp.util.Utilities.tr;
 import xtrememp.util.file.AudioFileFilter;
 import xtrememp.util.file.PlaylistFileFilter;
-
-import javax.sound.sampled.AudioSystem;
-import javax.swing.Box;
-import javax.swing.ButtonGroup;
-import javax.swing.JCheckBox;
-import javax.swing.JDialog;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
-import javax.swing.JRadioButtonMenuItem;
-import javax.swing.JSeparator;
-import javax.swing.JSlider;
-import javax.swing.JTable;
-import javax.swing.KeyStroke;
-import javax.swing.SwingConstants;
-import javax.swing.UIManager;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.CommandLineParser;
-import org.apache.commons.cli.HelpFormatter;
-import org.apache.commons.cli.Option;
-import org.apache.commons.cli.OptionBuilder;
-import org.apache.commons.cli.Options;
-import org.apache.commons.cli.ParseException;
-import org.apache.commons.cli.PosixParser;
-import org.pushingpixels.lafwidget.animation.AnimationConfigurationManager;
-import org.pushingpixels.lafwidget.animation.AnimationFacet;
-import org.pushingpixels.substance.api.DecorationAreaType;
-import org.pushingpixels.substance.api.SubstanceConstants;
-import org.pushingpixels.substance.api.SubstanceLookAndFeel;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.melloware.jintellitype.IntellitypeListener;
-import com.melloware.jintellitype.JIntellitype;
-import java.awt.Rectangle;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 
 /**
  * XtremeMP main class.
@@ -248,7 +195,8 @@ public final class XtremeMP implements ActionListener, ControlListener,
 
                 @Override
                 public void run() {
-                    if (!OSUtils.IS_OS_WINDOWS_7 && !OSUtils.IS_OS_WINDOWS_VISTA) {
+                    if (!OSUtils.IS_OS_WINDOWS_8 && !OSUtils.IS_OS_WINDOWS_7
+                            && !OSUtils.IS_OS_WINDOWS_VISTA) {
                         JFrame.setDefaultLookAndFeelDecorated(true);
                         JDialog.setDefaultLookAndFeelDecorated(true);
                     }
@@ -306,7 +254,7 @@ public final class XtremeMP implements ActionListener, ControlListener,
                     playlist.setPlayMode(Settings.getPlayMode());
 
                     List<String> argList = Arrays.asList(line.getArgs());
-                    List<File> fileList = new ArrayList<File>();
+                    List<File> fileList = new ArrayList<>();
                     if (argList.isEmpty()) {
                         File playlistFile = new File(Settings.getCacheDir(), Utilities.DEFAULT_PLAYLIST);
                         if (playlistFile.exists()) {
@@ -852,7 +800,7 @@ public final class XtremeMP implements ActionListener, ControlListener,
                 try {
                     URL url = new URL(tr("Application.homepage"));
                     desktop.browse(url.toURI());
-                } catch (Exception ex) {
+                } catch (URISyntaxException | IOException ex) {
                     logger.error(ex.getMessage(), ex);
                 }
             }
@@ -1229,7 +1177,7 @@ public final class XtremeMP implements ActionListener, ControlListener,
                 isFile = pli.isFile();
                 if (isFile) {
                     audioPlayer.open(new File(pli.getLocation()));
-                    duration = Math.round(audioPlayer.getDuration() / 1000);
+                    duration = Math.round(audioPlayer.getDuration() / 1000.0F);
                 } else {
                     audioPlayer.open(new URL(pli.getLocation()));
                 }
@@ -1261,7 +1209,7 @@ public final class XtremeMP implements ActionListener, ControlListener,
                             seekSlider.setEnabled(false);
                         }
                     }
-                } catch (Exception ex) {
+                } catch (InterruptedException | ExecutionException ex) {
                     if (ex.getCause() instanceof PlayerException) {
                         acStop();
                         setStatus("An error occurred...");

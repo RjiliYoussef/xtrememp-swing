@@ -1,7 +1,7 @@
 /**
  * Xtreme Media Player a cross-platform media player.
- * Copyright (C) 2005-2010 Besmir Beqiri
- * 
+ * Copyright (C) 2005-2012 Besmir Beqiri
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -21,8 +21,8 @@ package xtrememp.ui.button;
 import java.awt.Dimension;
 import javax.swing.JButton;
 import org.pushingpixels.substance.api.SubstanceLookAndFeel;
-import xtrememp.util.Utilities;
 import xtrememp.ui.button.shaper.PlayPauseButtonShaper;
+import xtrememp.util.Utilities;
 
 /**
  *

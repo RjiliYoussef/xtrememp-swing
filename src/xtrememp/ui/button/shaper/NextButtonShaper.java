@@ -1,7 +1,7 @@
 /**
  * Xtreme Media Player a cross-platform media player.
- * Copyright (C) 2005-2010 Besmir Beqiri
- * 
+ * Copyright (C) 2005-2012 Besmir Beqiri
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -24,28 +24,32 @@ import java.awt.geom.Area;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.RoundRectangle2D;
 import javax.swing.AbstractButton;
+import static xtrememp.util.Utilities.tr;
 
 /**
  *
  * @author Besmir Beqiri
  */
-public class NextButtonShaper extends ButtonShaper {
+public final class NextButtonShaper extends AbstractButtonShaper {
 
     @Override
     public String getDisplayName() {
-        return "Next";
+        return tr("MainFrame.Menu.Player.Next");
     }
 
     @Override
-    public Shape getButtonOutline(AbstractButton button, Insets insets,
-			int width, int height, boolean isInner) {
-        int w = width - 1;
-        int h = height - 1;
+    public Shape getButtonOutline(final AbstractButton button,
+        final Insets insets, final int width, final int height,
+        final boolean isInner) {
 
-        int z = h / 3;
+        final double w = width - 1;
+        final double h = height - 1;
 
-        Shape shape = new Ellipse2D.Double(0, 0, z, h);
-        Area area = new Area(new RoundRectangle2D.Double(z / 2, 0, w - z, h, z, z));
+        final double length = h / 3.0D;
+
+        final Shape shape = new Ellipse2D.Double(0, 0, length, h);
+        final Area area = new Area(new RoundRectangle2D.Double(length / 2, 0,
+                w - length, h, length, length));
         area.subtract(new Area(shape));
 
         return area;

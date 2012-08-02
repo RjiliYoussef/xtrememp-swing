@@ -27,7 +27,7 @@ import javax.swing.AbstractButton;
  *
  * @author Besmir Beqiri
  */
-public class PlayPauseButtonShaper extends ButtonShaper {
+public class PlayPauseButtonShaper extends AbstractButtonShaper {
 
     @Override
     public String getDisplayName() {

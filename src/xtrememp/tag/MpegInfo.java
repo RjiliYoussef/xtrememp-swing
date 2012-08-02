@@ -78,16 +78,22 @@ public class MpegInfo extends TagInfo {
                 encodingType = audioHeader.getEncodingType();
                 encoder = audioHeader.getEncoder();
                 channels = audioHeader.getChannels();
-                if (channels.equals("Stereo")) {
-                    channelsAsNumber = 2;
-                } else if (channels.equals("Joint Stereo")) {
-                    channelsAsNumber = 2;
-                } else if (channels.equals("Dual")) {
-                    channelsAsNumber = 2;
-                } else if (channels.equals("Mono")) {
-                    channelsAsNumber = 1;
-                } else {
-                    channelsAsNumber = 0;
+                switch (channels) {
+                    case "Stereo":
+                        channelsAsNumber = 2;
+                        break;
+                    case "Joint Stereo":
+                        channelsAsNumber = 2;
+                        break;
+                    case "Dual":
+                        channelsAsNumber = 2;
+                        break;
+                    case "Mono":
+                        channelsAsNumber = 1;
+                        break;
+                    default:
+                        channelsAsNumber = 0;
+                        break;
                 }
                 sampleRateAsNumber = audioHeader.getSampleRateAsNumber();
                 bitRateAsNumber = (int) audioHeader.getBitRateAsNumber();
@@ -109,6 +115,7 @@ public class MpegInfo extends TagInfo {
                 genre = mpegTag.getFirst(FieldKey.GENRE);
                 track = mpegTag.getFirst(FieldKey.TRACK);
                 comment = mpegTag.getFirst(FieldKey.COMMENT);
+                artwork = mpegTag.getFirstArtwork();
             }
         } catch (CannotReadException ex) {
             throw new IOException(ex);

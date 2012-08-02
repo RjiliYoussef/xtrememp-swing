@@ -29,7 +29,7 @@ import javax.swing.AbstractButton;
  *
  * @author Besmir Beqiri
  */
-public class PreviousButtonShaper extends ButtonShaper {
+public class PreviousButtonShaper extends AbstractButtonShaper {
 
     @Override
     public String getDisplayName() {

@@ -31,7 +31,7 @@ import org.pushingpixels.substance.api.renderers.SubstanceDefaultComboBoxRendere
  *
  * @author Besmir Beqiri
  */
-public abstract class IconComboBox<T> extends JComboBox {
+public abstract class IconComboBox<T> extends JComboBox<T> {
 
     public IconComboBox(T[] items) {
         super(items);

@@ -27,7 +27,7 @@ import javax.swing.AbstractButton;
  *
  * @author Besmir Beqiri
  */
-public class RoundSquareButtonShaper extends ButtonShaper {
+public class RoundSquareButtonShaper extends AbstractButtonShaper {
 
     @Override
     public String getDisplayName() {
@@ -37,8 +37,10 @@ public class RoundSquareButtonShaper extends ButtonShaper {
     @Override
     public Shape getButtonOutline(AbstractButton button, Insets insets,
 			int width, int height, boolean isInner) {
-        int w = width - 1;
-        int h = height - 1;
-        return new RoundRectangle2D.Double(0, 0, w, h, w / 3, h / 3);
+        double w = width - 1;
+        double h = height - 1;
+        double arcw = w / 3.0D;
+        double arch = h / 3.0D;
+        return new RoundRectangle2D.Double(0.0D, 0.0D, w, h, arcw, arch);
     }
 }

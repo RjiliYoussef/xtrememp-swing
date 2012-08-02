@@ -74,7 +74,7 @@ public class PreferencesDialog extends JDialog implements ActionListener {
 //    private JCheckBox enqueueCheckBox;
     private JCheckBox updatesCheckBox;
     private JTextField cacheDirTextField;
-    private JComboBox mixerComboBox;
+    private JComboBox<String> mixerComboBox;
     private JButton changeCacheDirButton;
     private JButton resetButton;
     private JButton closeButton;
@@ -240,7 +240,7 @@ public class PreferencesDialog extends JDialog implements ActionListener {
         JPanel audioPanel = new JPanel(new MigLayout("ins 8,fillx"));
         addTextSeparator(audioPanel, tr("Dialog.Preferences.Audio.PlaybackDevice"));
         audioPanel.add(new JLabel(tr("Dialog.Preferences.Audio.PlaybackDevice.Mixer"), SwingConstants.LEADING));
-        mixerComboBox = new JComboBox(audioPlayer.getMixers().toArray());
+        mixerComboBox = new JComboBox<String>(audioPlayer.getMixers().toArray(new String[0]));
         mixerComboBox.setSelectedItem(Settings.getMixerName());
         mixerComboBox.addActionListener(this);
         audioPanel.add(mixerComboBox, "span,growx");

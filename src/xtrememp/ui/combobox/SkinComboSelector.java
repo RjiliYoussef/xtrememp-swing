@@ -36,7 +36,7 @@ import xtrememp.ui.skin.DarkSapphireSkin;
  *
  * @author Besmir Beqiri
  */
-public class SkinComboSelector extends JComboBox {
+public class SkinComboSelector extends JComboBox<SkinInfo> {
 
     public SkinComboSelector() {
         super();

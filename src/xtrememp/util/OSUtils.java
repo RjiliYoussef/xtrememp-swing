@@ -150,6 +150,15 @@ public class OSUtils {
      * </p>
      */
     public static final boolean IS_OS_WINDOWS_7 = getOSMatches(OS_NAME_WINDOWS_PREFIX, "6.1");
+    /**
+     * <p>
+     * Is {@code true} if this is Windows 8.
+     * </p>
+     * <p>
+     * The field will return {@code false} if {@code OS_NAME} is {@code null}.
+     * </p>
+     */
+    public static final boolean IS_OS_WINDOWS_8 = getOSMatches(OS_NAME_WINDOWS_PREFIX, "6.2");
 
     /**
      * Decides if the operating system matches.

@@ -24,7 +24,7 @@ import java.io.InputStream;
 import java.net.URL;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.UnsupportedAudioFileException;
-import org.jaudiotagger.tag.datatype.Artwork;
+import org.jaudiotagger.tag.images.Artwork;
 
 /**
  * TagInfo interface define needed features for song information.
